@@ -59,8 +59,8 @@ btn.Position   = UDim2.new(0.06, 0, 0, 62)
 btn.BackgroundColor3 = Color3.fromRGB(255, 190, 40)
 btn.TextColor3       = Color3.fromRGB(22, 22, 26)
 btn.Font             = Enum.Font.GothamBlack
-btn.Text             = "OG BLOCK"
-btn.TextSize         = 26
+btn.Text             = "START OG BLOCK"
+btn.TextSize         = 20
 btn.AutoButtonColor  = false
 btn.Parent = main
 
