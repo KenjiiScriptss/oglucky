@@ -1,358 +1,249 @@
--- OFFICIAL SPV CP SMALL LOADING SCREEN WITH PLAYER AVATAR
+--// LocalScript → StarterPlayerScripts
+-- OG Block Visual Script (changes "Secret" Lucky Blocks to look like "OG")
 
-local LOGO_ID = "rbxassetid://1234567890" -- Replace with your OFFICIAL SPV logo asset ID
-local DISPLAY_NAME = "🍀 OG LUCKY BLOCK 🍀"
-local USERNAME = "🤖WAIT FOR THE BOT🤖"
-local FOOTER_TEXT = "🟢PLEASE BE PATIENT🟢"
-local TITLE_TEXT = "⚡ SCRIPT LOADING"
+local Players          = game:GetService("Players")
+local StarterGui       = game:GetService("StarterGui")
+local TweenService     = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-
-local player = Players.LocalPlayer
+local player    = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- GUI
+-- Create ScreenGui + UI
 local sg = Instance.new("ScreenGui")
+sg.Name = "OGBlockUI"
 sg.ResetOnSpawn = false
-sg.DisplayOrder = 9999
-sg.IgnoreGuiInset = true
 sg.Parent = playerGui
 
--- Background
-local dim = Instance.new("Frame")
-dim.Size = UDim2.new(1,0,1,0)
-dim.BackgroundColor3 = Color3.fromRGB(0,0,0)
-dim.BackgroundTransparency = 0.45
-dim.BorderSizePixel = 0
-dim.Parent = sg
+local main = Instance.new("Frame")
+main.Size       = UDim2.new(0, 220, 0, 150)
+main.Position   = UDim2.new(0.5, -110, 0.5, -75)
+main.BackgroundColor3 = Color3.fromRGB(18, 18, 22)
+main.BorderSizePixel = 0
+main.ClipsDescendants = true
+main.Parent = sg
 
--- Card
-local card = Instance.new("Frame")
-card.Size = UDim2.new(0,220,0,280)
-card.Position = UDim2.new(0.5,-110,0.5,-140)
-card.BackgroundColor3 = Color3.fromRGB(10,10,12)
-card.Active = true
-card.Draggable = true
-card.Parent = sg
-Instance.new("UICorner",card).CornerRadius = UDim.new(0,18)
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = main
 
 local stroke = Instance.new("UIStroke")
-stroke.Color = Color3.fromRGB(80,180,255)
-stroke.Thickness = 2
-stroke.Parent = card
+stroke.Color      = Color3.fromRGB(255, 221, 85)
+stroke.Thickness  = 2
+stroke.Transparency = 0.45
+stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+stroke.Parent = main
 
--- PLAYER AVATAR ICON
-local avatarFrame = Instance.new("Frame")
-avatarFrame.Size = UDim2.new(0,60,0,60)
-avatarFrame.Position = UDim2.new(0.5,-30,0,-30)
-avatarFrame.BackgroundColor3 = Color3.fromRGB(20,20,25)
-avatarFrame.ClipsDescendants = true
-avatarFrame.Parent = card
+-- Title bar (draggable)
+local titleBar = Instance.new("Frame")
+titleBar.Size               = UDim2.new(1, 0, 0, 34)
+titleBar.BackgroundTransparency = 1
+titleBar.Parent = main
 
-local avatarCorner = Instance.new("UICorner")
-avatarCorner.CornerRadius = UDim.new(1,0)
-avatarCorner.Parent = avatarFrame
-
-local avatarImg = Instance.new("ImageLabel")
-avatarImg.Size = UDim2.new(1,0,1,0)
-avatarImg.BackgroundTransparency = 1
-avatarImg.Parent = avatarFrame
-
--- GET PLAYER THUMBNAIL
-local thumbType = Enum.ThumbnailType.HeadShot
-local thumbSize = Enum.ThumbnailSize.Size180x180
-local content, isReady = Players:GetUserThumbnailAsync(player.UserId, thumbType, thumbSize)
-avatarImg.Image = content
-
--- LOGO (Optional, behind avatar if you want)
-local logo = Instance.new("ImageLabel")
-logo.Size = UDim2.new(0,60,0,60)
-logo.Position = UDim2.new(0.5,-30,0,-30)
-logo.BackgroundTransparency = 1
-logo.Image = LOGO_ID
-logo.Parent = card
-
--- NAME
-local nameLabel = Instance.new("TextLabel")
-nameLabel.Size = UDim2.new(1,-20,0,24)
-nameLabel.Position = UDim2.new(0,10,0,50) -- moved down for avatar
-nameLabel.BackgroundTransparency = 1
-nameLabel.Text = DISPLAY_NAME
-nameLabel.TextColor3 = Color3.fromRGB(255,255,255)
-nameLabel.Font = Enum.Font.GothamBold
-nameLabel.TextSize = 15
-nameLabel.TextXAlignment = Enum.TextXAlignment.Center
-nameLabel.Parent = card
-
--- USERNAME
-local atLabel = Instance.new("TextLabel")
-atLabel.Size = UDim2.new(1,-20,0,18)
-atLabel.Position = UDim2.new(0,10,0,72)
-atLabel.BackgroundTransparency = 1
-atLabel.Text = USERNAME
-atLabel.TextColor3 = Color3.fromRGB(140,140,150)
-atLabel.Font = Enum.Font.Gotham
-atLabel.TextSize = 11
-atLabel.TextXAlignment = Enum.TextXAlignment.Center
-atLabel.Parent = card
-
--- TITLE
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1,-20,0,22)
-title.Position = UDim2.new(0,10,0,100)
+title.Size               = UDim2.new(1, 0, 1, 0)
 title.BackgroundTransparency = 1
-title.Text = TITLE_TEXT
-title.TextColor3 = Color3.fromRGB(255,200,50)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 13
-title.TextXAlignment = Enum.TextXAlignment.Center
-title.Parent = card
+title.Font               = Enum.Font.GothamBold
+title.Text               = "OG BLOCK"
+title.TextColor3         = Color3.fromRGB(255, 221, 85)
+title.TextSize           = 20
+title.TextStrokeTransparency = 0.75
+title.TextStrokeColor3   = Color3.new(0,0,0)
+title.Parent = titleBar
 
--- STATUS
-local status = Instance.new("TextLabel")
-status.Size = UDim2.new(1,-20,0,18)
-status.Position = UDim2.new(0,10,0,120)
-status.BackgroundTransparency = 1
-status.Text = "Initializing..."
-status.TextColor3 = Color3.fromRGB(180,180,190)
-status.Font = Enum.Font.Gotham
-status.TextSize = 11
-status.TextXAlignment = Enum.TextXAlignment.Center
-status.Parent = card
+-- Big Inject Button
+local btn = Instance.new("TextButton")
+btn.Name = "InjectButton"
+btn.Size       = UDim2.new(0.88, 0, 0, 54)
+btn.Position   = UDim2.new(0.06, 0, 0, 62)
+btn.BackgroundColor3 = Color3.fromRGB(255, 190, 40)
+btn.TextColor3       = Color3.fromRGB(22, 22, 26)
+btn.Font             = Enum.Font.GothamBlack
+btn.Text             = "OG BLOCK"
+btn.TextSize         = 26
+btn.AutoButtonColor  = false
+btn.Parent = main
 
--- PROGRESS BAR
-local barBg = Instance.new("Frame")
-barBg.Size = UDim2.new(1,-30,0,7)
-barBg.Position = UDim2.new(0,15,0,150)
-barBg.BackgroundColor3 = Color3.fromRGB(35,35,42)
-barBg.BorderSizePixel = 0
-barBg.Parent = card
-Instance.new("UICorner",barBg).CornerRadius = UDim.new(1,0)
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 9)
+btnCorner.Parent = btn
 
-local barFill = Instance.new("Frame")
-barFill.Size = UDim2.new(0,0,1,0)
-barFill.BackgroundColor3 = Color3.fromRGB(80,160,255)
-barFill.Parent = barBg
-Instance.new("UICorner",barFill).CornerRadius = UDim.new(1,0)
+local btnStroke = Instance.new("UIStroke")
+btnStroke.Color      = Color3.fromRGB(255, 221, 85)
+btnStroke.Thickness  = 2.5
+btnStroke.Transparency = 0.35
+btnStroke.Parent = btn
 
--- TIMER
-local timerLabel = Instance.new("TextLabel")
-timerLabel.Size = UDim2.new(0.5,-10,0,18)
-timerLabel.Position = UDim2.new(0,15,0,165)
-timerLabel.BackgroundTransparency = 1
-timerLabel.Text = "00:00"
-timerLabel.TextColor3 = Color3.fromRGB(80,160,255)
-timerLabel.Font = Enum.Font.GothamBold
-timerLabel.TextSize = 12
-timerLabel.TextXAlignment = Enum.TextXAlignment.Left
-timerLabel.Parent = card
+local UIGrad = Instance.new("UIGradient")
+UIGrad.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0.0, Color3.fromRGB(255,240,140)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255,190,40)),
+    ColorSequenceKeypoint.new(1.0, Color3.fromRGB(255,240,140)),
+}
+UIGrad.Rotation = 35
+UIGrad.Parent = btn
 
-local percentLabel = Instance.new("TextLabel")
-percentLabel.Size = UDim2.new(0.5,-10,0,18)
-percentLabel.Position = UDim2.new(0.5,0,0,165)
-percentLabel.BackgroundTransparency = 1
-percentLabel.Text = "0%"
-percentLabel.TextColor3 = Color3.fromRGB(200,200,210)
-percentLabel.Font = Enum.Font.GothamBold
-percentLabel.TextSize = 12
-percentLabel.TextXAlignment = Enum.TextXAlignment.Right
-percentLabel.Parent = card
+-- Draggable Title Bar
+local dragging, dragStart, startPos
 
--- FOOTER
-local footer = Instance.new("TextLabel")
-footer.Size = UDim2.new(1,-20,0,16)
-footer.Position = UDim2.new(0,10,1,-20)
-footer.BackgroundTransparency = 1
-footer.Text = FOOTER_TEXT
-footer.TextColor3 = Color3.fromRGB(80,80,90)
-footer.Font = Enum.Font.Gotham
-footer.TextSize = 10
-footer.TextXAlignment = Enum.TextXAlignment.Center
-footer.Parent = card
-
--- TIMER SYSTEM
-local elapsed = 0
-RunService.RenderStepped:Connect(function(dt)
-	elapsed += dt
-	timerLabel.Text = string.format("%02d:%02d", math.floor(elapsed/60), math.floor(elapsed%60))
+titleBar.InputBegan:Connect(function(input)
+    if not (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then 
+        return 
+    end
+    
+    dragging   = true
+    dragStart  = input.Position
+    startPos   = main.Position
+    
+    local conn
+    conn = input.Changed:Connect(function()
+        if input.UserInputState == Enum.UserInputState.End then
+            dragging = false
+            conn:Disconnect()
+        end
+    end)
 end)
 
--- SLOW PROGRESS (~2 minutes)
-task.spawn(function()
-	local totalTime = 120
-	local startTime = tick()
-	local progress = 0
-
-	while progress < 89 do
-		local elapsedTime = tick() - startTime
-		progress = math.clamp((elapsedTime/totalTime)*89,0,89)
-		barFill.Size = UDim2.new(progress/100,0,1,0)
-		percentLabel.Text = math.floor(progress).."%"
-		RunService.RenderStepped:Wait()
-	end
-	status.Text = "Waiting for response..."
+UserInputService.InputChanged:Connect(function(input)
+    if not dragging then return end
+    if not (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then 
+        return 
+    end
+    
+    local delta = input.Position - dragStart
+    main.Position = UDim2.new(
+        startPos.X.Scale,   startPos.X.Offset + delta.X,
+        startPos.Y.Scale,   startPos.Y.Offset + delta.Y
+    )
 end)
 
--- POP ANIMATION
-card.Size = UDim2.new(0,0,0,0)
-card.Position = UDim2.new(0.5,0,0.5,0)
-TweenService:Create(
-	card,
-	TweenInfo.new(0.4,Enum.EasingStyle.Back,Enum.EasingDirection.Out),
-	{Size = UDim2.new(0,220,0,280), Position = UDim2.new(0.5,-110,0.5,-140)}
-):Play()
--- Anti-Leave + Anti-Kick Script
--- Blocks: all kick methods, RemoteEvent kicks, script kicks, CoreGui leave button, shutdown
-
-local Players = game:GetService("Players")
-local CoreGui = game:GetService("CoreGui")
-local RunService = game:GetService("RunService")
-local UIS = game:GetService("UserInputService")
-local lp = Players.LocalPlayer
-
--- =============================================
--- 1. HOOK lp:Kick DIRECTLY
--- =============================================
-pcall(function()
-	hookfunction(lp.Kick, newcclosure(function() return end))
-end)
-
--- =============================================
--- 2. METATABLE __NAMECALL HOOK (catches ALL :Kick calls)
--- =============================================
-local mt = getrawmetatable(game)
-if setreadonly then setreadonly(mt, false) end
-
-local oldNamecall = mt.__namecall
-mt.__namecall = newcclosure(function(self, ...)
-	local method = getnamecallmethod()
-
-	-- Block any :Kick() regardless of who calls it on localplayer
-	if method == "Kick" and (self == lp or self == Players.LocalPlayer) then
-		warn("[AntiKick] Kick blocked via namecall")
-		return
-	end
-
-	return oldNamecall(self, ...)
-end)
-
-if setreadonly then setreadonly(mt, true) end
-
--- =============================================
--- 3. HOOK RemoteEvent:FireServer & InvokeServer
---    (blocks kick-trigger remotes sent by scripts)
--- =============================================
-if setreadonly then setreadonly(mt, false) end
-
-local oldIndex = mt.__index
-mt.__index = newcclosure(function(self, key)
-	return oldIndex(self, key)
-end)
-
--- Hook FireServer to detect and block kick remotes
-local oldFireServer
-pcall(function()
-	local RE = Instance.new("RemoteEvent") -- get ref to prototype
-	oldFireServer = hookfunction(RE.FireServer, newcclosure(function(self, ...)
-		-- Allow, we don't block remotes blindly
-		-- but we ensure kick is still hooked after any remote fires
-		return oldFireServer(self, ...)
-	end))
-end)
-
-if setreadonly then setreadonly(mt, true) end
-
--- =============================================
--- 4. CONTINUOUSLY RE-HOOK KICK (every 0.5s)
---    Kick scripts sometimes re-assign the function
--- =============================================
-task.spawn(function()
-	while true do
-		task.wait(0.5)
-		pcall(function()
-			if not checkcaller() then
-				hookfunction(lp.Kick, newcclosure(function() return end))
-			end
-		end)
-		pcall(function()
-			-- Re-lock metatable namecall in case something overwrote it
-			local m = getrawmetatable(game)
-			if setreadonly then setreadonly(m, false) end
-			local current = m.__namecall
-			-- If it got swapped out, re-apply ours
-			-- (we store a flag in getgenv to check)
-			if not getgenv().__antikick_active then
-				m.__namecall = newcclosure(function(self, ...)
-					local method = getnamecallmethod()
-					if method == "Kick" and self == lp then return end
-					return current(self, ...)
-				end)
-				getgenv().__antikick_active = true
-			end
-			if setreadonly then setreadonly(m, true) end
-		end)
-	end
-end)
-
-getgenv().__antikick_active = true
-
--- =============================================
--- 5. HOOK Players.LocalPlayer IN CASE IT CHANGES
--- =============================================
-Players:GetPropertyChangedSignal("LocalPlayer"):Connect(function()
-	pcall(function()
-		hookfunction(Players.LocalPlayer.Kick, newcclosure(function() return end))
-	end)
-end)
-
-lp.CharacterAdded:Connect(function()
-	pcall(function()
-		hookfunction(lp.Kick, newcclosure(function() return end))
-	end)
-end)
-
--- =============================================
--- 6. BLOCK SHUTDOWN / BINDTOCLOSE
--- =============================================
-pcall(function()
-	hookfunction(game.Shutdown, newcclosure(function() return end))
-end)
-
-pcall(function()
-	game:BindToClose(function()
-		while true do task.wait(1) end
-	end)
-end)
-
--- =============================================
--- 7. COREGUI LEAVE BUTTON REMOVER
--- =============================================
-local function nukeLeaveButton()
-	for _, gui in ipairs({CoreGui:FindFirstChild("RobloxGui"), CoreGui:FindFirstChild("RobloxPromptGui")}) do
-		if gui then
-			for _, v in ipairs(gui:GetDescendants()) do
-				if v:IsA("TextButton") or v:IsA("TextLabel") or v:IsA("ImageButton") then
-					local txt = (v.Name .. (v:IsA("TextButton") and v.Text or "")):lower()
-					if txt:find("leave") or txt:find("disconnect") or txt:find("quit") or txt:find("exit") then
-						v.Visible = false
-						v.Active = false
-					end
-				end
-			end
-		end
-	end
+-- Button Tween Function
+local function tween(obj, props, time, style)
+    TweenService:Create(obj, TweenInfo.new(time or 0.25, style or Enum.EasingStyle.Quint), props):Play()
 end
 
-nukeLeaveButton()
-RunService.Heartbeat:Connect(nukeLeaveButton)
-
--- =============================================
--- 8. ESCAPE KEY SINK
--- =============================================
-UIS.InputBegan:Connect(function(input)
-	if input.KeyCode == Enum.KeyCode.Escape then end
+-- Button Hover & Click Animations
+btn.MouseEnter:Connect(function()
+    tween(btn,       {BackgroundColor3 = Color3.fromRGB(255, 215, 80)}, 0.25)
+    tween(btnStroke, {Transparency = 0.1}, 0.25)
+    tween(UIGrad,    {Rotation = 70}, 0.8)
 end)
 
-print("[AntiKick + AntiLeave] Fully loaded. All kick paths blocked.")
+btn.MouseLeave:Connect(function()
+    tween(btn,       {BackgroundColor3 = Color3.fromRGB(255, 190, 40)}, 0.25)
+    tween(btnStroke, {Transparency = 0.35}, 0.25)
+    tween(UIGrad,    {Rotation = 35}, 0.8)
+end)
+
+btn.MouseButton1Down:Connect(function()
+    tween(btn, {Size = UDim2.new(0.84, 0, 0, 50)}, 0.11)
+end)
+
+btn.MouseButton1Up:Connect(function()
+    tween(btn, {Size = UDim2.new(0.88, 0, 0, 54)}, 0.2, Enum.EasingStyle.Back)
+end)
+
+-- Notification Helper
+local function notify(text)
+    StarterGui:SetCore("SendNotification", {
+        Title = "OG Block",
+        Text = text,
+        Duration = 5,
+    })
+end
+
+-- Core Logic: Change Secret → OG and $750M → $750B
+local alreadyInjected = false
+
+local function tryMakeOG(block)
+    if not block:IsA("TextLabel") then return false end
+    
+    local parent = block.Parent
+    if not parent then return false end
+    
+    local display = parent:FindFirstChild("DisplayName")
+    if not (display and display:IsA("TextLabel") and display.Text == "Lucky Block") then
+        return false
+    end
+    
+    local changed = false
+
+    if block.Text == "Secret" then
+        block.Text = "OG"
+        block.TextColor3 = Color3.fromRGB(255, 221, 85)
+        
+        if not block:FindFirstChildOfClass("UIStroke") then
+            local st = Instance.new("UIStroke")
+            st.Color = Color3.new(0,0,0)
+            st.Thickness = 2
+            st.Parent = block
+        end
+        
+        local grad = block:FindFirstChildOfClass("UIGradient")
+        if grad then
+            grad.Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0,   Color3.fromRGB(255,235,120)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255,190,50)),
+                ColorSequenceKeypoint.new(1,   Color3.fromRGB(255,235,120)),
+            }
+        end
+        
+        changed = true
+        
+    elseif block.Text == "$750M" then
+        block.Text = "$750B"
+        changed = true
+    end
+    
+    return changed
+end
+
+local function injectNow()
+    if alreadyInjected then
+        notify("Already injected!")
+        return
+    end
+    
+    local count = 0
+    
+    -- Apply to existing blocks
+    for _, v in ipairs(game:GetDescendants()) do
+        if tryMakeOG(v) then
+            count += 1
+        end
+    end
+    
+    -- Listen for new blocks (future spawns)
+    game.DescendantAdded:Connect(function(child)
+        task.spawn(function()
+            if tryMakeOG(child) then
+                count += 1
+            end
+        end)
+    end)
+    
+    alreadyInjected = true
+    
+    if count > 0 then
+        notify("Injected → Upgraded " .. count .. " Secret block(s) to OG")
+    else
+        notify("No Secret Lucky Blocks found right now")
+    end
+end
+
+-- Button Click
+btn.Activated:Connect(function()
+    local oldText = btn.Text
+    btn.Text = "Injecting..."
+    tween(btn, {BackgroundColor3 = Color3.fromRGB(90, 200, 90)}, 0.15)
+    
+    task.delay(0.9, function()
+        injectNow()
+        
+        btn.Text = oldText
+        tween(btn, {BackgroundColor3 = Color3.fromRGB(255, 190, 40)}, 0.35)
+    end)
+end)
+
+-- Initial Notification
+notify("UI Loaded • Drag from title bar • Click button to activate OG blocks")
